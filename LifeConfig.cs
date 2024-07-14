@@ -1,4 +1,4 @@
-﻿using Rocket.API;
+using Rocket.API;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,11 +9,14 @@ namespace LifeControl
 {
     public class LifeConfig : IRocketPluginConfiguration
     {
+        public bool DisableChat;
         public bool InfHealth;
         public bool InfFood;
         public bool InfWater;
         public bool InfStamina;
         public bool DisableVirus;
+        public bool DisableStatusIcons;
+        public bool DisableVehicleHud;
         public bool DisableHealthHud;
         public bool DisableFoodHud;
         public bool DisableWaterHud;
@@ -23,11 +26,14 @@ namespace LifeControl
 
         public void LoadDefaults()
         {
+            DisableChat = false;
             InfHealth = true;
             InfFood = true;
             InfWater = true;
             InfStamina = true;
-            DisableVirus = true;
+            DisableVirus = false;
+            DisableStatusIcons = false;
+            DisableVehicleHud = false;
             DisableHealthHud = false;
             DisableFoodHud = false;
             DisableWaterHud = false;
