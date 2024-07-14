@@ -1,15 +1,14 @@
-﻿using Rocket.Core.Logging;
 using Rocket.Core.Plugins;
-using Rocket.Unturned;
 using Rocket.Unturned.Events;
 using Rocket.Unturned.Player;
+using Rocket.Unturned;
 using SDG.Unturned;
-using Steamworks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Rocket.Core.Logging;
 
 namespace LifeControl
 {
@@ -18,18 +17,68 @@ namespace LifeControl
         protected override void Load()
         {
             Logger.Log("Nel Plugins", ConsoleColor.Red);
+            Logger.Log("Support Discord", ConsoleColor.Cyan);
+            Logger.Log("https://discord.gg/wSt3Jsx2bC", ConsoleColor.Cyan);
+            Logger.Log("░░░░░░░░░░░░░░░░░░░░░▄▀░░▌", ConsoleColor.Red);
+            Logger.Log("░░░░░░░░░░░░░░░░░░░▄▀▐░░░▌", ConsoleColor.Red);
+            Logger.Log("░░░░░░░░░░░░░░░░▄▀▀▒▐▒░░░▌", ConsoleColor.Red);
+            Logger.Log("░░░░░▄▀▀▄░░░▄▄▀▀▒▒▒▒▌▒▒░░▌", ConsoleColor.Red);
+            Logger.Log("░░░░▐▒░░░▀▄▀▒▒▒▒▒▒▒▒▒▒▒▒▒█", ConsoleColor.Red);
+            Logger.Log("░░░░▌▒░░░░▒▀▄▒▒▒▒▒▒▒▒▒▒▒▒▒▀▄", ConsoleColor.Red);
+            Logger.Log("░░░░▐▒░░░░░▒▒▒▒▒▒▒▒▒▌▒▐▒▒▒▒▒▀▄", ConsoleColor.Red);
+            Logger.Log("░░░░▌▀▄░░▒▒▒▒▒▒▒▒▐▒▒▒▌▒▌▒▄▄▒▒▐", ConsoleColor.Red);
+            Logger.Log("░░░▌▌▒▒▀▒▒▒▒▒▒▒▒▒▒▐▒▒▒▒▒█▄█▌▒▒▌", ConsoleColor.Red);
+            Logger.Log("░▄▀▒▐▒▒▒▒▒▒▒▒▒▒▒▄▀█▌▒▒▒▒▒▀▀▒▒▐░░░▄", ConsoleColor.Red);
+            Logger.Log("▀▒▒▒▒▌▒▒▒▒▒▒▒▄▒▐███▌▄▒▒▒▒▒▒▒▄▀▀▀▀", ConsoleColor.Red);
+            Logger.Log("▒▒▒▒▒▐▒▒▒▒▒▄▀▒▒▒▀▀▀▒▒▒▒▄█▀░░▒▌▀▀▄▄", ConsoleColor.Red);
+            Logger.Log("▒▒▒▒▒▒█▒▄▄▀▒▒▒▒▒▒▒▒▒▒▒░░▐▒▀▄▀▄░░░░▀", ConsoleColor.Red);
+            Logger.Log("▒▒▒▒▒▒▒█▒▒▒▒▒▒▒▒▒▄▒▒▒▒▄▀▒▒▒▌░░▀▄", ConsoleColor.Red);
+            Logger.Log("▒▒▒▒▒▒▒▒▀▄▒▒▒▒▒▒▒▒▀▀▀▀▒▒▒▄▀", ConsoleColor.Red);
+            Logger.Log("Nel Plugins", ConsoleColor.Red);
+            Logger.Log("Support Discord", ConsoleColor.Cyan);
+            Logger.Log("https://discord.gg/wSt3Jsx2bC", ConsoleColor.Cyan);
             Logger.Log("Life Control Loaded", ConsoleColor.Blue);
+            U.Events.OnPlayerConnected += NelPlayerConnected;
             UnturnedPlayerEvents.OnPlayerUpdateHealth += UnturnedPlayerEvents_OnPlayerUpdateHealth;
             UnturnedPlayerEvents.OnPlayerUpdateFood += UnturnedPlayerEvents_OnPlayerUpdateFood;
             UnturnedPlayerEvents.OnPlayerUpdateWater += UnturnedPlayerEvents_OnPlayerUpdateWater;
             UnturnedPlayerEvents.OnPlayerUpdateStamina += UnturnedPlayerEvents_OnPlayerUpdateStamina;
             UnturnedPlayerEvents.OnPlayerUpdateVirus += UnturnedPlayerEvents_OnPlayerUpdateVirus;
-            U.Events.OnPlayerConnected += HandlePlayerConnect;
+            UnturnedPlayerEvents.OnPlayerChatted += NelChat;
         }
-
-        private void HandlePlayerConnect(UnturnedPlayer player)
+        private void NelChat(UnturnedPlayer player, ref UnityEngine.Color color, string message, EChatMode chatMode, ref bool cancel)
         {
-            if (Configuration.Instance.DisableHealthHud == true)
+            var c = Configuration.Instance;
+            if (c.DisableChat == true)
+            {
+                cancel = true;
+            }
+            else
+            {
+                cancel = false;
+            }
+        }
+        private void NelPlayerConnected(UnturnedPlayer player)
+        {
+            var c = Configuration.Instance;
+            if (c.DisableStatusIcons == true)
+            {
+                player.Player.disablePluginWidgetFlag(EPluginWidgetFlags.ShowStatusIcons);
+            }
+            else
+            {
+                player.Player.enablePluginWidgetFlag(EPluginWidgetFlags.ShowStatusIcons);
+            }
+            if (c.DisableVehicleHud == true)
+            {
+                player.Player.disablePluginWidgetFlag((EPluginWidgetFlags)8192);
+            }
+            else
+            {
+                player.Player.enablePluginWidgetFlag((EPluginWidgetFlags)8192);
+            }
+
+            if (c.DisableHealthHud == true)
             {
                 player.Player.disablePluginWidgetFlag(EPluginWidgetFlags.ShowHealth);
             }
@@ -38,9 +87,7 @@ namespace LifeControl
                 player.Player.enablePluginWidgetFlag(EPluginWidgetFlags.ShowHealth);
             }
 
-
-
-            if (Configuration.Instance.DisableFoodHud == true)
+            if (c.DisableFoodHud == true)
             {
                 player.Player.disablePluginWidgetFlag(EPluginWidgetFlags.ShowFood);
             }
@@ -49,8 +96,7 @@ namespace LifeControl
                 player.Player.enablePluginWidgetFlag(EPluginWidgetFlags.ShowFood);
             }
 
-
-            if (Configuration.Instance.DisableWaterHud == true)
+            if (c.DisableWaterHud == true)
             {
                 player.Player.disablePluginWidgetFlag(EPluginWidgetFlags.ShowWater);
             }
@@ -59,8 +105,7 @@ namespace LifeControl
                 player.Player.enablePluginWidgetFlag(EPluginWidgetFlags.ShowWater);
             }
 
-
-            if (Configuration.Instance.DisableStaminaHud == true)
+            if (c.DisableStaminaHud == true)
             {
                 player.Player.disablePluginWidgetFlag(EPluginWidgetFlags.ShowStamina);
             }
@@ -69,8 +114,7 @@ namespace LifeControl
                 player.Player.enablePluginWidgetFlag(EPluginWidgetFlags.ShowStamina);
             }
 
-
-            if (Configuration.Instance.DisableVirusHud == true)
+            if (c.DisableVirusHud == true)
             {
                 player.Player.disablePluginWidgetFlag(EPluginWidgetFlags.ShowVirus);
             }
@@ -79,8 +123,7 @@ namespace LifeControl
                 player.Player.enablePluginWidgetFlag(EPluginWidgetFlags.ShowVirus);
             }
 
-
-            if (Configuration.Instance.DisableOxygenHud == true)
+            if (c.DisableOxygenHud == true)
             {
                 player.Player.disablePluginWidgetFlag(EPluginWidgetFlags.ShowOxygen);
             }
@@ -89,8 +132,7 @@ namespace LifeControl
                 player.Player.enablePluginWidgetFlag(EPluginWidgetFlags.ShowOxygen);
             }
         }
-
-        private void UnturnedPlayerEvents_OnPlayerUpdateVirus(Rocket.Unturned.Player.UnturnedPlayer player, byte virus)
+            private void UnturnedPlayerEvents_OnPlayerUpdateVirus(Rocket.Unturned.Player.UnturnedPlayer player, byte virus)
         {
             if (Configuration.Instance.DisableVirus == true)
             {
